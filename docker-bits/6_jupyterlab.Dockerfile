@@ -137,6 +137,10 @@ RUN sed -i -e 's/history/hash/' ${OMPP_INSTALL_DIR}/ompp-ui/quasar.conf.js \
 COPY jupyter-ompp-proxy/ /opt/jupyter-ompp-proxy/
 RUN pip install /opt/jupyter-ompp-proxy/
 
+COPY openmpp-mpi-job/* ${OMPP_INSTALL_DIRECTORY}/etc/
+RUN chmod +x ${OMPP_INSTALL_DIRECTORY}/etc/openmpp-mpi-job/parseCommand.py
+# What's the working directory of the openm web service when it's started?
+
 # Solarized Theme and Cell Execution Time
 COPY jupyterlab-overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 

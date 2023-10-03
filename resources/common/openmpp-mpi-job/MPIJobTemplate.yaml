@@ -1,0 +1,52 @@
+apiVersion: kubeflow.org/v1
+kind: MPIJob
+metadata:
+  name: #<modelName>
+  namespace: #<nameSpace>
+spec:
+  #slotsPerWorker:
+  runPolicy:
+    cleanPodPolicy: Running
+  mpiReplicaSpecs:
+    Launcher:
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            data.statcn.gc.ca/inject-blob-volumes: 'true' # Access blob storage.
+            sidecar.istio.io/inject: "false" # Init container conflicts with istio.
+        spec:
+          containers:
+          - image: #<containerImageReference>
+            name: #<modelName>
+            command:
+            - mpirun
+            #<mpirunOption>
+            #<modelExecutable>
+            #<OpenMOption>
+            resources:
+              limits:
+                cpu: '2'
+                memory: 2Gi
+              requests:
+                cpu: 250m
+                memory: 250Mi
+
+    Worker:
+      replicas: #<numberOfReplicas>
+      template:
+        spec:
+          containers:
+          - image: #<containerImageReference>
+            name: #<modelName>
+            resources:
+                limits:
+                  cpu: '2'
+                  memory: 2Gi
+                requests:
+                  cpu: '2'
+                  memory: 1Gi
+
+            # In the tensorflow example there are volume and volume mount definitions for the worker pods.
+            # I don't think this is necessary if the container images used in the worker pod definitions
+            # have COPY directives that populate the ephemeral filesystem with the required files.
