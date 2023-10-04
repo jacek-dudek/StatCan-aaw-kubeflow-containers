@@ -2,9 +2,9 @@ apiVersion: kubeflow.org/v1
 kind: MPIJob
 metadata:
   name: #<modelName>
-  namespace: #<nameSpace>
+  namespace: aaw-team #<nameSpace>
 spec:
-  #slotsPerWorker:
+  #slotsPerWorker: Tensorflow example sets this attribute, but Pat's example template doesn't.
   runPolicy:
     cleanPodPolicy: Running
   mpiReplicaSpecs:
@@ -17,8 +17,9 @@ spec:
             sidecar.istio.io/inject: "false" # Init container conflicts with istio.
         spec:
           containers:
-          - image: #<containerImageReference>
-            name: #<modelName>
+          - image: k8scc01covidacr.azurecr.io/ompp-run-ubuntu:d1174244baa102b26f0850c3883e7b15c50a3b64
+            # There must be a better way than just hardcoding these image names in here, right?
+            name: #<modelName>-launcher
             command:
             - mpirun
             #<mpirunOption>
@@ -37,8 +38,9 @@ spec:
       template:
         spec:
           containers:
-          - image: #<containerImageReference>
-            name: #<modelName>
+          - image: k8scc01covidacr.azurecr.io/ompp-run-ubuntu:d1174244baa102b26f0850c3883e7b15c50a3b64
+            # Same as above, I don't think this should be hardcoded in like this.
+            name: #<modelName>-worker
             resources:
                 limits:
                   cpu: '2'

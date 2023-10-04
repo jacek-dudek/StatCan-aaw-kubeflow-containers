@@ -7,7 +7,11 @@ with open("./MPIJobTemplate.yaml") as template:
 
 i = 1
 while i < len(sys.argv):
-  if (i + 1 < len(sys.argv) and re.match("^-n$", sys.argv[i]) and re.match("^[0-9]+$", sys.argv[i+1])):
+  if (i + 1 < len(sys.argv) and re.match("^-modelName$", sys.argv[i])):
+    manifest = manifest.replace("#<modelName>", f"{sys.argv[i+1]}")
+    i += 2
+
+  elif (i + 1 < len(sys.argv) and re.match("^-n$", sys.argv[i]) and re.match("^[0-9]+$", sys.argv[i+1])):
     #print("Found the number of replicas option and argument.")
     manifest = manifest.replace("#<numberOfReplicas>", f"{sys.argv[i+1]}")
     manifest = manifest.replace("#<mpirunOption>", \
